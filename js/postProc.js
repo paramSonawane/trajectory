@@ -2,6 +2,7 @@ function postProcCanvas(){
     this.p5 = canvas._pInst;
     this.fovs = [];
     this.pointsInFovs = [];
+    this.checkMC = false;
 }
 
 postProcCanvas.prototype.plotPoints = function(){
@@ -42,7 +43,7 @@ postProcCanvas.prototype.updateCanvas = function (){
     // this.drawHull();
     this.drawRect();
     // this.plotPoints();
-    this.drawPath();
+    // this.drawPath();
     this.plotFoVs();
 }
 
@@ -52,12 +53,14 @@ postProcCanvas.prototype.showExportButton = function () {
 
     exportButton.mousePressed(() => {
         this.updateCanvas();
+        this.checkMC = true;
     });
 }
 
-postProcCanvas.prototype.drawPath = function(){
+postProcCanvas.prototype.drawPath = function(x, y){
     let p = new paths();
-    p.drawZigZag(this.rectCoords[0], this.rectCoords[1], 400, 10, 100, 0);
+    // p.drawZigZag(this.rectCoords[0], this.rectCoords[1], 400, 10, 100, 0);
+    p.drawZigZag(x, y, 400, 10, 100, 0);
 }
 
 postProcCanvas.prototype.generateFovs = function(){
@@ -82,25 +85,25 @@ postProcCanvas.prototype.generateFovs = function(){
 
 postProcCanvas.prototype.plotFoVs = function(){
     this.generateFovs();
-    maxPoints = {
+    this.maxPoints = {
         index : 0,
         value : 0
     }
 
     this.pointsInFovs.forEach((element, index) => {
-        if(element > maxPoints.value ){
-            maxPoints.value = element
-             maxPoints.index = index
+        if(element > this.maxPoints.value ){
+            this.maxPoints.value = element
+             this.maxPoints.index = index
         }
     });
 
     this.pointsInFovs.forEach((element, index) => {
-        this.fovs[index].probability = this.p5.map(element, 0, maxPoints.value, 0, 1);
+        this.fovs[index].probability = this.p5.map(element, 0, this.maxPoints.value, 0, 1);
     });
 
     this.fovs.forEach((element, index) => {
         element.draw();
     });
 
-    this.p5.point(this.fovs[maxPoints.index].squareX + this.sideOffset/2, this.fovs[maxPoints.index].squareY + this.sideOffset/2)
+    this.p5.point(this.fovs[this.maxPoints.index].squareX + this.sideOffset/2, this.fovs[this.maxPoints.index].squareY + this.sideOffset/2)
 }
