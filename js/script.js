@@ -1,4 +1,4 @@
-let nPts, postProc, leftCanvas, rightCanvas;
+let nPts, postProc, leftCanvas, rightCanvas, myMap;
 
 leftCanvas = new p5(
     (lCanvas) => {
@@ -60,7 +60,7 @@ rightCanvas = new p5(
             postProc = new postProcCanvas()
             postProc.showExportButton()
 
-            rCanvas.noLoop();
+            // rCanvas.noLoop();
         }
 
         rCanvas.draw = function(){
@@ -69,14 +69,17 @@ rightCanvas = new p5(
             // area1.draw();
             // area1.drawBoundary();
             // zz.draw();
-        }
-
-        function mousePressed(){
-            // lup = !lup
-            // if(lup)
-            // loop()
-            // else noLoop()
-            // area1.updateProbabilities(mouseX, mouseY, 1, 0.05)
+            if(postProc.checkMC){
+                canvas.mousePressed(()=>{
+                    //replace this function call
+                    postProc.drawHull()
+                    postProc.updateCanvas();
+                    console.log(rCanvas.mouseX, rCanvas.mouseY)
+                    postProc.checkMC = false;
+                });
+            }else{
+                canvas.mousePressed(()=>{});
+            }
         }
     }
 );
